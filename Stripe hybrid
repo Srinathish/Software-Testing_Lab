@@ -1,0 +1,112 @@
+package pages;
+
+import java.io.IOException;
+
+import org.openqa.selenium.WebDriver;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+
+import uistore.Locator;
+import utils.ExcelReader;
+import utils.LoggerHandler;
+import utils.Screenshot;
+import utils.WebDriverHelper;
+
+public class Page {
+    WebDriverHelper helper;
+    WebDriver driver;
+    ExtentTest test;
+    public Page(WebDriver driver,ExtentReports reports)
+    {
+        helper=new WebDriverHelper(driver);
+        test = reports.createTest("Test 1");
+        this.driver = driver;
+    }
+    public void Testcase() throws IOException
+    {
+        String user=ExcelReader.readdata("testdata/Data.xlsx", "Sheet1", 0, 0);
+        String pass=ExcelReader.readdata("testdata/Data.xlsx", "Sheet1", 1, 0);
+        helper.clickOnElement(Locator.User);
+        helper.sendKeys(Locator.User,user);
+        helper.clickOnElement(Locator.Pass);
+        helper.sendKeys(Locator.Pass,pass);
+        helper.clickOnElement(Locator.SignIn);
+        
+        LoggerHandler.initLog4j();
+        LoggerHandler.logInfo("OK");
+        
+        Screenshot.getScreenShot(driver, "screenshot/img.png");
+
+        helper.clickOnElement(Locator.forgot);
+
+    }
+    
+}
+
+
+
+
+
+
+package runner;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import com.aventstack.extentreports.ExtentReports;
+
+import pages.Page;
+import utils.Base;
+import utils.Reporter;
+public class TestRunner extends Base{
+
+    Page page;
+    ExtentReports reports;
+    @BeforeClass
+    public void Reportgenerate()
+    {
+        reports=Reporter.generateExtentReport("Job");
+    }
+    @BeforeMethod
+    public void setUp() throws MalformedURLException {
+     openBrowser();
+     page = new Page(driver,reports);
+    }
+    
+    @Test
+    public void testOne() throws IOException {
+        page.Testcase();
+    }
+    
+    @AfterMethod
+    public void tearDown() {
+        driver.quit();
+    }
+    @AfterClass
+    public void Flushing()
+    {
+        reports.flush();
+    }
+}
+
+
+
+
+
+package uistore;
+
+import org.openqa.selenium.By;
+
+public class Locator {
+    public static By User = By.xpath("//input[@type='email']");
+    public static By Pass = By.xpath("//input[@type='password']");
+    public static By SignIn = By.xpath("//div[@class='Box-root Flex-flex Flex-alignItems--baseline Flex-direction--row Flex-justifyContent--center']");
+    public static By forgot = By.xpath("//span[text()='Forgot your password?']");
+}
