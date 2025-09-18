@@ -1,0 +1,104 @@
+package pages;
+
+import org.openqa.selenium.WebDriver;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+
+import uistore.Locators;
+import utils.LoggerHandler;
+import utils.WebDriverHelper;
+
+public class Page {
+    WebDriverHelper helper;
+    ExtentTest test;
+
+    public Page(WebDriver driver,ExtentReports report)
+    {
+        helper = new WebDriverHelper(driver);
+        test = report.createTest("test1");
+    }
+
+    public void testcase(){
+        LoggerHandler.initLog4j();
+        LoggerHandler.logInfo("Details");
+        helper.clickOnElement(Locators.emailinput);
+        helper.sendKeys(Locators.emailinput, "user001@email.com");
+        helper.clickOnElement(Locators.passinput);
+        helper.sendKeys(Locators.passinput, "password321");
+        helper.clickOnElement(Locators.login_btn);
+    }
+    public void testcase2(){
+        helper.clickOnElement(Locators.forgot_pass);
+    }
+}
+
+
+
+
+
+package runner;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import com.aventstack.extentreports.ExtentReports;
+
+import utils.Base;
+import utils.Reporter;
+import utils.Screenshot;
+import pages.Page;
+public class TestRunner extends Base{
+    ExtentReports report;
+    Page p;
+
+    @BeforeClass
+    public void genrpt(){
+        report = Reporter.generateExtentReport("Reportstriver");
+    }
+
+    @BeforeMethod
+    public void launchBrowser() throws MalformedURLException {
+        openBrowser();
+        p = new Page(driver,report);
+    }
+    
+    @Test
+    public void testOne() throws IOException {
+        p.testcase();
+        Screenshot.getScreenShot(driver, "screenshot/myscreenshot.png");
+        p.testcase2();
+    }
+    
+    @AfterMethod
+    public void tearDown() {
+        driver.quit();
+    }
+
+    @AfterClass
+    public void finalrpt(){
+        report.flush();
+    }
+}
+
+
+
+
+package uistore;
+
+import org.openqa.selenium.By;
+
+public class Locators {
+    public static By emailinput = By.xpath("//input[@type = 'email']");
+    public static By passinput = By.xpath("//input[@type = 'password']");
+    public static By login_btn = By.xpath("(//div[contains(@class, 'PressableCore-overlay')])[4]");
+    public static By forgot_pass = By.xpath("//span[text() = 'Forgot your password?']");
+}
+
+
