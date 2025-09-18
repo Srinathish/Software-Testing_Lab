@@ -1,0 +1,92 @@
+// package runner;
+
+// import java.net.MalformedURLException;
+// import java.net.URL;
+// import org.openqa.selenium.WebDriver;
+// import org.openqa.selenium.chrome.ChromeOptions;
+// import org.openqa.selenium.remote.RemoteWebDriver;
+// import org.openqa.selenium.support.events.EventFiringDecorator;
+// import org.openqa.selenium.support.events.WebDriverListener;
+// import org.testng.annotations.BeforeMethod;
+// import org.testng.annotations.AfterMethod;
+// import utils.EventHandler;
+
+// public class TestSpice {
+//     public static WebDriver driver;
+    
+//     @BeforeMethod
+//     public void openBrowser() throws MalformedURLException {
+//         ChromeOptions options = new ChromeOptions();
+//         driver = new RemoteWebDriver(new URL("http://localhost:4444/"), options);
+        
+//         WebDriverListener listener = new EventHandler();
+//         driver = new EventFiringDecorator<>(listener).decorate(driver);
+//     }
+
+//     @AfterMethod
+//     public void closeBrowser() {
+//         if (driver != null) {
+//             driver.quit();
+//         }
+//     }
+// }
+
+
+package runner;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.events.EventFiringDecorator;
+import org.openqa.selenium.support.events.WebDriverListener;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+import utils.EventHandler;
+
+public class TestSpice {
+    public static WebDriver driver;
+
+    @BeforeMethod
+    public void openBrowser() throws MalformedURLException {
+        ChromeOptions options = new ChromeOptions();
+        driver = new RemoteWebDriver(new URL("http://localhost:4444/"), options);
+
+        WebDriverListener listener = new EventHandler();
+        driver = new EventFiringDecorator<>(listener).decorate(driver);
+
+        driver.get("https://groww.in/");
+    }
+
+    @Test(priority = 2)
+    public void test1() throws InterruptedException {
+        Thread.sleep(2000); 
+        driver.findElement(By.xpath("//span[text()='Login/Sign up']")).click();
+        Thread.sleep(2000); 
+    }
+
+    @Test(priority = 1)
+    public void test2() throws InterruptedException {
+        Thread.sleep(2000); 
+        driver.findElement(By.xpath("//span[text()='Login/Sign up']")).click();
+        Thread.sleep(2000); 
+
+        String header = driver.findElement(By.xpath("//h1[contains(text(),'Welcome to Groww')]")).getText();
+        // System.out.println(header);
+        Assert.assertTrue(header.contains("Welcome"));
+        // System.out.println("Asstion done");
+
+    }
+
+    @AfterMethod
+    public void closeBrowser() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+}
