@@ -1,0 +1,24 @@
+//screenshot
+File fs=((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+        File oo=new File("screenshot/img.png");
+        FileUtils.copyFile(fs,oo);
+
+
+
+//comparesvalue
+String header= driver.findElement(By.xpath("//h1[contains(text(),'Welcome to Groww')]")).getText();
+   Assert.assertTrue(header.contains("Welcome"));
+
+
+
+
+//scroll
+WebElement cal = driver.findElement(By.xpath("//span[text()='Calculators']"));
+		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", cal);
+		((JavascriptExecutor) driver).executeScript("arguments[0].click();", cal);
+
+
+
+//hover
+Actions act = new Actions(driver);
+act.moveToElement(_).build().perform();
