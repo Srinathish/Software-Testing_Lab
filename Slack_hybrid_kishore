@@ -1,0 +1,134 @@
+package Pages;
+
+import java.io.IOException;
+import java.util.logging.Logger;
+
+import org.openqa.selenium.WebDriver;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+
+import uistore.Locators;
+import utils.ExcelReader;
+import utils.LoggerHandler;
+import utils.WebDriverHelper;
+
+public class Pages {
+    WebDriverHelper helper;
+    ExtentTest tests;
+    public Pages(WebDriver driver,ExtentReports reports)
+    {
+        helper=new WebDriverHelper(driver);
+        tests=reports.createTest("Test");
+    }
+    public void testcase() throws InterruptedException
+    {
+        try {
+           helper.clickOnElement(Locators.first); 
+           helper.sendKeys(Locators.first,"FirstName");
+           Thread.sleep(5000);
+           String sur=ExcelReader.readdata("testdata/data.xlsx","Sheet1",0,0); 
+           helper.clickOnElement(Locators.last); 
+           helper.sendKeys(Locators.last,sur);
+           Thread.sleep(5000);
+           helper.clickOnElement(Locators.email); 
+           helper.sendKeys(Locators.email,"user002@email.com");
+           Thread.sleep(5000);
+           helper.clickOnElement(Locators.select);
+           helper.clickOnElement(Locators.Director);
+           Thread.sleep(5000);
+           LoggerHandler.initLog4j();
+           LoggerHandler.logInfo("Data is sent");
+           helper.clickOnElement(Locators.select2);
+           helper.clickOnElement(Locators.india);
+
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    } 
+    }
+    
+}
+
+
+
+
+
+package runner;
+
+import java.net.MalformedURLException;
+
+import org.openqa.selenium.By;
+
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+import com.aventstack.extentreports.ExtentReports;
+
+import utils.Base;
+import utils.Reporter;
+import utils.Screenshot;
+import Pages.Pages;
+public class TestSample extends Base {
+   Pages page;
+   ExtentReports reports;
+   @BeforeClass
+   public void generatereports()
+   {
+    reports=Reporter.generateExtentReport("Reports");
+   }
+    @BeforeMethod
+    public void launchBrowser() throws MalformedURLException {
+        openBrowser();
+        page=new Pages(driver,reports);
+    }
+
+    @Test
+    public void testOne() throws InterruptedException {
+       page.testcase();
+       try {
+        Screenshot.getScreenShot(driver, "screenshot/img.png");
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    }
+
+    @AfterMethod
+    public void tearDown() {
+        driver.quit();
+    }
+}
+
+
+
+
+
+
+package uistore;
+
+import org.openqa.selenium.By;
+
+public class Locators {
+     public static By first=By.xpath("//input[@id='first_name']");
+     public static By last=By.xpath("//input[@id='last_name']");
+     public static By email=By.xpath("//input[@id='email']");
+     public static By select=By.xpath("//select[@id='role_option']");
+     public static By Director=By.xpath("//option[text()='Director']");
+     public static By select2=By.xpath("//select[@id='country_option']");
+     public static By india=By.xpath("//option[text()='India']");
+}
+package uistore;
+
+import org.openqa.selenium.By;
+
+public class Locators {
+     public static By first=By.xpath("//input[@id='first_name']");
+     public static By last=By.xpath("//input[@id='last_name']");
+     public static By email=By.xpath("//input[@id='email']");
+     public static By select=By.xpath("//select[@id='role_option']");
+     public static By Director=By.xpath("//option[text()='Director']");
+     public static By select2=By.xpath("//select[@id='country_option']");
+     public static By india=By.xpath("//option[text()='India']");
+}
