@@ -22,3 +22,120 @@ WebElement cal = driver.findElement(By.xpath("//span[text()='Calculators']"));
 //hover
 Actions act = new Actions(driver);
 act.moveToElement(_).build().perform();
+
+
+
+
+
+//Hover
+WebElement w=driver.findElement(By.xpath("//"));
+Actions act=new Actions(driver);
+act.moveToElement(w).build().perform();
+
+//Navigating to prvs page 
+driver.navigate().back();
+
+//Reading data from excel file (given seprately)
+@Test
+public void test()
+{
+    FileInputStream fis=new FileInputStream("path");
+    Workbook wb=new XSSFWorkbook(fis);
+    Sheet sh=wb.getSheetAt(0);
+    Row row=sh.getRow(0);
+    String ss=row.getCell(0).getStringCellValue();
+    driver.findElement(By.xpath("")).sendKeys(ss);
+    wb.close();
+    fis.close();
+
+}
+//extend reports(gvn utils) -@Test
+Reporter.generateExtentReport("vivrichards");
+         Reporter.generateExtentReport().flush();
+
+//Screenshot(gvn seprately)
+@BeforeMethod
+{
+    driver.get("URL");
+}
+@Test 
+public void test() throws IOException
+{
+    File src=((TakesScreenshot)driver).getScrenshotsAs(OutputType.FILE);
+    File desc=new File("Path");
+    File Utils.copyFile(src,desc);
+}
+@AfterMethod
+{
+    driver.quit();
+}
+
+//Screenshot if utils gvn 
+Screenshot.getScrenshot(driver,"screenshot");
+
+//Alertbox
+
+Alert alert = driver.switchTo().alert();
+alert.accept();
+Alert alert1=driver.switchTo().alert();
+alert1.dismiss();
+
+//Thread
+Thread.sleep(3000);
+
+
+//Hover
+WebElement w=driver.findElement(By.xpath("//"));
+Actions act=new Actions(driver);
+act.moveToElement(w).build().perform();
+
+//Navigating to pvs page 
+driver.navigate().back();
+
+//Reading data from excel file (given seprately)
+@Test
+public void test()
+{
+    FileInputStream fis=new FileInputStream("path");
+    Workbook wb=new XSSFWorkbook(fis);
+    Sheet sh=wb.getSheetAt(0);
+    Row row=sh.getRow(0);
+    String ss=row.getCell(0).getStringCellValue();
+    driver.findElement(By.xpath("")).sendKeys(ss);
+    wb.close();
+    fis.close();
+
+}
+//extend reports(gvn utils) -@Test
+Reporter.generateExtentReport("vivrichards");
+         Reporter.generateExtentReport().flush();
+
+//Screenshot(gvn seprately)
+@BeforeMethod
+{
+    driver.get("URL");
+}
+@Test 
+public void test() throws IOException
+{
+    File src=((TakesScreenshot)driver).getScrenshotsAs(OutputType.FILE);
+    File desc=new File("Path");
+    File Utils.copyFile(src,desc);
+}
+@AfterMethod
+{
+    driver.quit();
+}
+
+//Screenshot if utils gvn 
+Screenshot.getScrenshot(driver,"screenshot");
+
+//Alertbox
+
+Alert alert = driver.switchTo().alert();
+alert.accept();
+Alert alert1=driver.switchTo().alert();
+alert1.dismiss();
+
+//Thread
+Thread.sleep(3000);
