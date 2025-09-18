@@ -1,0 +1,130 @@
+package pages;
+
+import java.io.IOException;
+
+import org.openqa.selenium.WebDriver;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+
+import uistore.Ui1;
+import utils.ExcelReader;
+import utils.LoggerHandler;
+import utils.Screenshot;
+import utils.WebDriverHelper;
+
+public class Page1 {
+
+        WebDriverHelper helper;
+        ExtentTest test;
+        WebDriver driver; // only used here for taking screenshot(parameter)
+
+      public Page1(WebDriver driver, ExtentReports reports)
+      {
+            helper = new WebDriverHelper(driver);
+            this.driver = driver;
+            test=reports.createTest("test1");
+      }
+
+      public void perforTest()
+      {
+        try{
+            
+            String xemail = ExcelReader.readdata("testdata/Data.xlsx", "Sheet1", 0, 0);
+            
+            helper.clickOnElement(Ui1.email);
+            helper.sendKeys(Ui1.email, xemail);
+            
+            helper.clickOnElement(Ui1.role);
+            helper.clickOnElement(Ui1.developer);
+
+            helper.clickOnElement(Ui1.next);
+
+            helper.clickOnElement(Ui1.signin);
+
+            Screenshot.getScreenShot(driver, "screenshot/myScreenshot.png");
+
+            LoggerHandler.initLog4j();
+            LoggerHandler.logInfo("This is an info message");
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
+      }
+}
+
+
+
+package runner;
+
+import java.net.MalformedURLException;
+
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.model.Report;
+
+import pages.Page1;
+import utils.Base;
+import utils.Reporter;
+
+public class TestSample extends Base {
+
+    ExtentReports reports;
+    Page1 page1;
+
+    @BeforeClass
+    public void generateReport()
+    {
+        reports = Reporter.generateExtentReport("job report");
+    }
+
+    @BeforeMethod
+    public void setUp () throws MalformedURLException{
+        openBrowser();
+        page1 = new Page1(driver,reports);
+    }
+    
+    @Test
+    public void testOne() {
+        // write or call ur pages here
+        page1.perforTest();
+    }
+    
+    @AfterMethod
+    public void tearDown() {
+        // launch your browser
+        if(driver!=null)
+        driver.quit();
+    }
+
+    @AfterClass
+    public void flushreport()
+    {
+        if(reports!=null)
+        reports.flush();
+
+    }
+}
+
+
+
+
+
+package uistore;
+
+import org.openqa.selenium.By;
+
+public class Ui1 {
+    
+    public static By email  =  By.xpath("//input[@name='Email']");
+    public static By role  =  By.xpath("//select[@id='field-NumberOfEmployees']");
+    public static By developer  =  By.xpath("//strong[text()='16-492']");
+    public static By next  =  By.xpath("//span[@class='foreground__FzNcQ' and contains(.,'Next') ]");
+    public static By signin  =  By.xpath("((//a[@data-i2-child='anchor' and contains(.,'Sign in')])[1]");
+}
