@@ -1,0 +1,113 @@
+package pages;
+
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+
+import uistore.Locators;
+import utils.LoggerHandler;
+import utils.WebDriverHelper;
+
+public class Page {
+    ExtentTest test;
+    WebDriverHelper helper;
+    public Page(WebDriver driver,ExtentReports report) {
+        helper = new WebDriverHelper(driver);
+        test = report.createTest("abc");
+    }
+    
+
+    public void testcase(){
+        LoggerHandler.initLog4j();
+        LoggerHandler.logInfo("Details");
+        helper.clickOnElement(Locators.emailinput);
+        helper.sendKeys(Locators.emailinput, "Email009@email.com");
+        helper.clickOnElement(Locators.passwordinput);
+        helper.sendKeys(Locators.passwordinput,"password@009");
+        helper.clickOnElement(Locators.rememberme);
+        helper.clickOnElement(Locators.loginbutton);
+        helper.clickOnElement(Locators.forgotpass);
+    }
+
+    public void testrun(){
+        testcase();
+    }
+    
+}
+
+
+
+
+
+package runner;
+
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import com.aventstack.extentreports.ExtentReports;
+
+import pages.Page;
+import utils.Base;
+import utils.Reporter;
+import utils.Screenshot;
+
+public class TestRunner extends Base{
+    ExtentReports report;
+    Page p;
+
+    @BeforeClass
+    public void genReport() {
+        report = Reporter.generateExtentReport("salesforce_report");
+    }
+
+    @BeforeMethod
+    public void launchBrowser() throws MalformedURLException {
+        openBrowser();
+        p = new Page(driver,report);
+    }
+    
+    @Test
+    public void testOne() throws IOException {
+        p.testrun();
+        Screenshot.getScreenShot(driver, "screenshot/myscreenshot.png");
+    }
+    
+    @AfterMethod
+    public void tearDown() {
+        driver.quit();
+    }
+
+    @AfterClass
+    public void finalReport() {
+        report.flush();
+    }
+}
+
+
+
+
+
+
+
+package uistore;
+
+import org.openqa.selenium.By;
+
+public class Locators {
+    public static By emailinput = By.xpath("//input[@id = 'username']");
+    public static By passwordinput = By.xpath("//input[@id = 'password']");
+    public static By rememberme = By.xpath("///input[@type = 'checkbox']");
+    public static By loginbutton = By.xpath("//input[@id= 'Login']");
+    public static By forgotpass = By.xpath("//a[text() = 'Forgot Your Password?']");
+
+}
