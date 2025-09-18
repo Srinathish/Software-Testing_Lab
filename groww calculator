@@ -1,0 +1,78 @@
+package runner;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.time.Duration;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.events.EventFiringDecorator;
+import org.openqa.selenium.support.events.WebDriverListener;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import utils.EventHandler;
+
+public class TestRunner {
+	public static WebDriver driver;
+	static int PAGE_LOAD_TIME = 20;
+
+	@BeforeMethod
+	public WebDriver beforeMethod() throws MalformedURLException {
+		ChromeOptions chromeOptions = new ChromeOptions();
+		driver = new RemoteWebDriver(new URL("http://localhost:4444/"), chromeOptions);
+		driver.get("https://groww.in/");
+		driver.manage().window().maximize();
+		driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(PAGE_LOAD_TIME));
+		WebDriverListener listener = new EventHandler();
+		driver = new EventFiringDecorator<>(listener).decorate(driver);
+		return driver;
+
+	}
+	@Test
+	public void testcase() throws Exception {
+		WebElement cal = driver.findElement(By.xpath("//span[text()='Calculators']"));
+		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", cal);
+		((JavascriptExecutor) driver).executeScript("arguments[0].click();", cal);
+		driver.findElement(By.xpath("//a[text()='Home Loan EMI Calculator']")).click();
+	
+		WebElement loan=driver.findElement(By.xpath("(//input[@class='number-input bodyXLargeHeavy  default '])[1]"));
+		loan.clear();
+		loan.sendKeys("2300000");
+		WebElement rate=driver.findElement(By.xpath("(//input[@class='number-input bodyXLargeHeavy  default '])[2]"));
+		rate.clear();
+		rate.sendKeys("8");
+		WebElement year=driver.findElement(By.xpath("(//input[@class='number-input bodyXLargeHeavy  default '])[3]"));
+		year.clear();
+		year.sendKeys("20");
+		String monthlyEmi=driver.findElement((By.xpath("(//td[@class='right-align']//span)[1]"))).getText();
+		String principal=driver.findElement(By.xpath("(//td[@class='right-align']//span)[2]")).getText();
+		String interest =driver.findElement(By.xpath("(//td[@class='right-align']//span)[3]")).getText();
+		String amount=driver.findElement(By.xpath("(//td[@class='right-align']//span)[4]")).getText();
+		System.out.print(monthlyEmi);
+		System.out.print(principal);
+		System.out.print(interest);
+		System.out.print(amount);
+		Thread.sleep(10000);
+
+	}
+	
+
+
+	
+	@AfterMethod
+	public void tearDown() {
+		if (driver != null) {
+			driver.quit();
+		}
+	}
+
+}
+ testng poh
