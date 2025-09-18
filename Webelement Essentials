@@ -1,0 +1,7 @@
+ driver = new RemoteWebDriver(new URL("http://localhost:4444"), new ChromeOptions());
+            driver.manage().window().maximize();
+            driver.get("https://opensource-demo.orangehrmlive.com/web/index.php/auth/login");
+            driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(15));
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+            WebDriverListener listener = new EventHandler();
+            driver = new EventFiringDecorator<>(listener).decorate(driver);
