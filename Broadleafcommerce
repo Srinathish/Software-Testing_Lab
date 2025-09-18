@@ -1,0 +1,103 @@
+package pages;
+
+import org.openqa.selenium.WebDriver;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+
+import uistore.locators;
+import utils.LoggerHandler;
+import utils.WebDriverHelper;
+
+public class page {
+    WebDriverHelper helper;
+    ExtentTest test;
+    public page(WebDriver driver,ExtentReports reports)
+    {
+        helper=new WebDriverHelper(driver);
+        test=reports.createTest("test");
+    }
+    public void testcase()
+    {
+        helper.clickOnElement(locators.name);
+        helper.sendKeys(locators.name,"Fullname");
+        helper.clickOnElement(locators.email);
+        helper.sendKeys(locators.email,"Email@email.com");
+        helper.clickOnElement(locators.password);
+        helper.sendKeys(locators.password,"password@007");
+        helper.clickOnElement(locators.confirm);
+        LoggerHandler.initLog4j();
+        LoggerHandler.logInfo("Details are Entered");
+        helper.sendKeys(locators.confirm,"password@007");
+        helper.clickOnElement(locators.login);
+    }
+
+}
+
+
+
+
+package runner;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import com.aventstack.extentreports.ExtentReports;
+
+import utils.Base;
+import utils.Reporter;
+import utils.Screenshot;
+import pages.page;
+public class TestSample extends Base  {
+    page pag;
+    ExtentReports reports;
+    @BeforeClass
+    public void generatereport()
+    {
+         reports=Reporter.generateExtentReport("Report");
+      }
+    @BeforeMethod
+    public void launchBrowser() throws MalformedURLException {
+        
+        openBrowser();
+        pag=new page(driver,reports);
+
+    }
+    
+    @Test
+    public void testOne() throws InterruptedException, IOException {
+        pag.testcase();
+        Screenshot.getScreenShot(driver,"screenshot/data/xlsx");
+          Thread.sleep(5000);
+        }
+        
+        @AfterMethod
+    public void tearDown() {
+        driver.quit();
+    }
+    @AfterClass
+    public void after()
+    {
+        reports.flush();
+    }
+}
+
+
+
+
+package uistore;
+import org.openqa.selenium.By;
+
+public class locators {
+    public static By name=By.xpath("//input[@id='talent_create_applicant[fullName]']");
+    public static By email=By.xpath("//input[@name='email']");
+    public static By password=By.xpath("//input[@name='password']");
+    public static By confirm=By.xpath("//input[@name='passwordConfirmation']");
+    public static By login=By.xpath("//button[@type='submit']");
+}
