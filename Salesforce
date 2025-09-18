@@ -1,41 +1,51 @@
 package pages;
 
-import org.openqa.selenium.Keys;
+import java.io.IOException;
+
 import org.openqa.selenium.WebDriver;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.Status;
 
 import uistore.Locators;
+import utils.ExcelReader;
 import utils.LoggerHandler;
+import utils.Screenshot;
 import utils.WebDriverHelper;
 
 public class Page {
-    ExtentTest test;
+
+    ExtentReports reports;
     WebDriverHelper helper;
-    public Page(WebDriver driver,ExtentReports report) {
+    ExtentTest test;
+    WebDriver driver;
+
+    public Page(WebDriver driver, ExtentReports reports) {
+        this.driver = driver;
+        this.reports = reports;
         helper = new WebDriverHelper(driver);
-        test = report.createTest("abc");
+        test = reports.createTest("hi");
     }
-    
 
-    public void testcase(){
+    public void Testcase1() throws IOException {
+        String h1 = ExcelReader.readdata("testdata/Data.xlsx", "Sheet1", 0, 0);
+        String h2 = ExcelReader.readdata("testdata/Data.xlsx", "Sheet1", 1, 0);
+
+        helper.clickOnElement(Locators.user);
+        helper.sendKeys(Locators.user, h1);
+
+        helper.clickOnElement(Locators.pass);
+        helper.sendKeys(Locators.pass, h2);
+
+        helper.clickOnElement(Locators.me);
+        helper.clickOnElement(Locators.login);
+        helper.clickOnElement(Locators.fgt);
+
         LoggerHandler.initLog4j();
-        LoggerHandler.logInfo("Details");
-        helper.clickOnElement(Locators.emailinput);
-        helper.sendKeys(Locators.emailinput, "Email009@email.com");
-        helper.clickOnElement(Locators.passwordinput);
-        helper.sendKeys(Locators.passwordinput,"password@009");
-        helper.clickOnElement(Locators.rememberme);
-        helper.clickOnElement(Locators.loginbutton);
-        helper.clickOnElement(Locators.forgotpass);
-    }
+        LoggerHandler.logInfo("Ok");
 
-    public void testrun(){
-        testcase();
+        Screenshot.getScreenShot(driver, "screenshot/img.png");
     }
-    
 }
 
 
@@ -62,24 +72,26 @@ import utils.Reporter;
 import utils.Screenshot;
 
 public class TestRunner extends Base{
-    ExtentReports report;
+    ExtentReports reports;
     Page p;
 
     @BeforeClass
     public void genReport() {
-        report = Reporter.generateExtentReport("salesforce_report");
+        reports = Reporter.generateExtentReport("salesforce_report");
     }
 
     @BeforeMethod
     public void launchBrowser() throws MalformedURLException {
         openBrowser();
-        p = new Page(driver,report);
+        p = new Page(driver,reports);
+        
     }
     
     @Test
     public void testOne() throws IOException {
-        p.testrun();
-        Screenshot.getScreenShot(driver, "screenshot/myscreenshot.png");
+        p.Testcase1();
+        Screenshot.getScreenShot(driver, "screenshot/img.png");
+
     }
     
     @AfterMethod
@@ -89,12 +101,9 @@ public class TestRunner extends Base{
 
     @AfterClass
     public void finalReport() {
-        report.flush();
+        reports.flush();
     }
 }
-
-
-
 
 
 
@@ -104,10 +113,9 @@ package uistore;
 import org.openqa.selenium.By;
 
 public class Locators {
-    public static By emailinput = By.xpath("//input[@id = 'username']");
-    public static By passwordinput = By.xpath("//input[@id = 'password']");
-    public static By rememberme = By.xpath("///input[@type = 'checkbox']");
-    public static By loginbutton = By.xpath("//input[@id= 'Login']");
-    public static By forgotpass = By.xpath("//a[text() = 'Forgot Your Password?']");
-
+    public static By user = By.xpath("/html/body/div[1]/div[1]/div/div/div[2]/div[3]/form/div[1]/div/input[1]");
+    public static By pass = By.xpath("/html/body/div[1]/div[1]/div/div/div[2]/div[3]/form/input[1]");
+    public static By me = By.xpath("/html/body/div[1]/div[1]/div/div/div[2]/div[3]/form/div[3]/label");
+    public static By login = By.xpath("/html/body/div[1]/div[1]/div/div/div[2]/div[3]/form/input[2]");
+    public static By fgt = By.xpath("/html/body/div[1]/div[1]/div/div/div[2]/div[3]/div/a[1]");
 }
